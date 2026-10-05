@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
-const Progress = require("../models/Progress");
+const Progress = require("../models/progress");
 
 // Helper: Generate Access Token (short-lived: 15 minutes)
 const generateAccessToken = (user) =>
