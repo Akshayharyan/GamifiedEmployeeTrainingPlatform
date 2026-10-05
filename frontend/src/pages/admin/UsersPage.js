@@ -50,30 +50,6 @@ export default function UsersPage() {
     return { totalUsers, trainers, admins, employees };
   }, [users]);
 
-  const roleBreakdown = useMemo(() => {
-    const base = totals.totalUsers || 1;
-    return [
-      {
-        label: "Admins",
-        value: totals.admins,
-        width: `${Math.round((totals.admins / base) * 100)}%`,
-        color: "bg-rose-500",
-      },
-      {
-        label: "Trainers",
-        value: totals.trainers,
-        width: `${Math.round((totals.trainers / base) * 100)}%`,
-        color: "bg-amber-500",
-      },
-      {
-        label: "Employees",
-        value: totals.employees,
-        width: `${Math.round((totals.employees / base) * 100)}%`,
-        color: "bg-emerald-500",
-      },
-    ];
-  }, [totals]);
-
   if (loading) {
     return (
       <div className="flex min-h-[200px] items-center justify-center rounded-3xl border border-slate-100 bg-white text-lg text-slate-500 shadow-sm">

@@ -54,11 +54,6 @@ function AnalyticsPage() {
     { name: "Assignments", value: stats.totalAssignments },
   ];
 
-  const assignmentCoverage =
-    stats.totalModules === 0
-      ? 0
-      : Math.round((stats.totalAssignments / stats.totalModules) * 100);
-
   return (
     <div className="space-y-6">
       <section className="admin-glow-card rounded-3xl border border-slate-100 bg-gradient-to-r from-white via-slate-50 to-indigo-50 p-6 shadow-sm">

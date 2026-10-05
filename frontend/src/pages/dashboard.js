@@ -13,8 +13,6 @@ import {
   Zap,
   ArrowRight,
   PlayCircle,
-  Target,
-  BookOpen,
 } from "lucide-react";
 
 function Dashboard() {

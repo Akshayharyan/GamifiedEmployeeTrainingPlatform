@@ -67,24 +67,6 @@ const EmployeeMonitoringPage = () => {
     [avgProgress, totalXp, totalCompleted]
   );
 
-  const statusSummary = useMemo(() => {
-    const completed = employees.filter((e) => (e.progressPercent || 0) === 100).length;
-    const onTrack = employees.filter(
-      (e) => (e.progressPercent || 0) >= 60 && (e.progressPercent || 0) < 100
-    ).length;
-    const behind = employees.filter((e) => (e.progressPercent || 0) < 60).length;
-    return { completed, onTrack, behind };
-  }, [employees]);
-
-  const laggingLearners = useMemo(
-    () =>
-      [...employees]
-        .filter((e) => (e.progressPercent || 0) < 60)
-        .sort((a, b) => (a.progressPercent || 0) - (b.progressPercent || 0))
-        .slice(0, 6),
-    [employees]
-  );
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64 text-gray-500">
@@ -209,21 +191,5 @@ const EmployeeMonitoringPage = () => {
   );
 };
 
-function StatusRow({ label, value, tone }) {
-  const tones = {
-    indigo: "bg-indigo-100 text-indigo-700",
-    emerald: "bg-emerald-100 text-emerald-700",
-    rose: "bg-rose-100 text-rose-700",
-  };
-
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-slate-600">{label}</span>
-      <span className={`rounded-full px-2 py-1 text-xs font-semibold ${tones[tone] || tones.indigo}`}>
-        {value}
-      </span>
-    </div>
-  );
-}
 
 export default EmployeeMonitoringPage;

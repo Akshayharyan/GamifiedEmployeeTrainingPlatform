@@ -124,6 +124,41 @@ export default function KnowledgeRunner() {
   }, [moduleId, token, gameStatus]);
 
   /* =========================================
+     SOUND
+  ========================================= */
+  const playFeedbackSound = useCallback((isCorrect) => {
+    if (!soundEnabled) return;
+
+    const audioContext = new (window.AudioContext ||
+      window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    oscillator.connect(gain);
+    gain.connect(audioContext.destination);
+
+    if (isCorrect) {
+      oscillator.frequency.value = 800;
+      gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime + 0.2
+      );
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.2);
+    } else {
+      oscillator.frequency.value = 300;
+      gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime + 0.3
+      );
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.3);
+    }
+  }, [soundEnabled]);
+
+  /* =========================================
      SUBMIT ANSWER
   ========================================= */
   const handleSubmitAnswer = useCallback(
@@ -176,7 +211,7 @@ export default function KnowledgeRunner() {
         setAnswerSubmitted(false);
       }
     },
-    [selectedAnswer, answerSubmitted, sessionId, token]
+    [selectedAnswer, answerSubmitted, sessionId, token, playFeedbackSound]
   );
 
   /* =========================================
@@ -232,41 +267,6 @@ export default function KnowledgeRunner() {
     } catch (error) {
       console.error("Certificate download failed:", error);
       alert("Could not download certificate. Please try again.");
-    }
-  };
-
-  /* =========================================
-     SOUND
-  ========================================= */
-  const playFeedbackSound = (isCorrect) => {
-    if (!soundEnabled) return;
-
-    const audioContext = new (window.AudioContext ||
-      window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-
-    oscillator.connect(gain);
-    gain.connect(audioContext.destination);
-
-    if (isCorrect) {
-      oscillator.frequency.value = 800;
-      gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(
-        0.01,
-        audioContext.currentTime + 0.2
-      );
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.2);
-    } else {
-      oscillator.frequency.value = 300;
-      gain.gain.setValueAtTime(0.2, audioContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(
-        0.01,
-        audioContext.currentTime + 0.3
-      );
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.3);
     }
   };
 

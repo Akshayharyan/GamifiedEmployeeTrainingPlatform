@@ -61,7 +61,7 @@ export default function TrainerGamePage() {
       });
 
       if (res.ok) {
-        const data = await res.json();
+        await res.json();
         setAlert({
           type: "success",
           message: `✓ Successfully saved "${selectedGame === 'boss-arena' ? 'Boss Battle Arena' : 'Knowledge Runner'}" for this module!`

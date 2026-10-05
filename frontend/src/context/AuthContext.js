@@ -1,5 +1,5 @@
 // src/context/AuthContext.js
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
@@ -18,9 +18,6 @@ export const AuthProvider = ({ children }) => {
   );
   const [loading, setLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
-
-  // Use ref to track newly logged-in tokens to avoid refreshUser using stale closure
-  const justLoggedInRef = useRef(false);
 
   const isAuthenticated = !!accessToken;
 
