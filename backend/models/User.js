@@ -56,6 +56,12 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "trainer", "employee"],
       default: "employee",
     },
+
+    /* ================= TOKENS ================= */
+    refreshToken: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

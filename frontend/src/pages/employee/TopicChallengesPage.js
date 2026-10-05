@@ -20,7 +20,7 @@ export default function TopicChallengesPage() {
   useEffect(() => {
     const loadTopic = async () => {
       const res = await fetch(
-        `http://localhost:5000/api/modules/${moduleId}/topics/${topicIndex}`,
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/${moduleId}/topics/${topicIndex}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await res.json();
@@ -94,7 +94,7 @@ export default function TopicChallengesPage() {
   const next = () => isLast ? finish() : setCurrent(c => c + 1);
 
   const finish = async () => {
-    await fetch("http://localhost:5000/api/modules/complete-topic", {
+    await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/complete-topic`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -276,7 +276,7 @@ export default function TopicChallengesPage() {
                 }
 
                 onRun={async (code) => {
-                  const res = await fetch("http://localhost:5000/api/grader/grade", {
+                  const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/grader/grade`, {
                     method: "POST",
                     headers: {
                       Authorization: `Bearer ${token}`,
@@ -301,7 +301,7 @@ export default function TopicChallengesPage() {
                 }}
 
                 onSubmit={async (code) => {
-                  const res = await fetch("http://localhost:5000/api/grader/grade", {
+                  const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/grader/grade`, {
                     method: "POST",
                     headers: {
                       Authorization: `Bearer ${token}`,

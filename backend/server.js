@@ -58,7 +58,10 @@ const gameRoutes = require("./routes/gameRoutes");
 // ===============================
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: (process.env.CLIENT_URL || "http://localhost:3000")
+      .split(",")
+      .map((origin) => origin.trim())
+      .filter(Boolean),
     credentials: true,
   })
 );

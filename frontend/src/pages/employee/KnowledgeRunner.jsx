@@ -2,12 +2,13 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import API from "../../utils/axios";
 import TowerHUD from "../../components/knowledgeRunner/TowerHUD";
 import TowerScene from "../../components/knowledgeRunner/TowerScene";
 import ChallengePanel from "../../components/knowledgeRunner/ChallengePanel";
 import GameOver from "../../components/GameOver";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api`;
 
 export default function KnowledgeRunner() {
   const { token } = useAuth();
@@ -211,13 +212,8 @@ export default function KnowledgeRunner() {
     if (!results?.certificateId || !token) return;
 
     try {
-      const res = await fetch(
-        `${API_URL}/certificates/download/${results.certificateId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const res = await API.get(
+        `/certificates/download/${results.certificateId}`
       );
 
       if (!res.ok) {

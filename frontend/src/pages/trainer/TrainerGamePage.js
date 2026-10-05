@@ -21,7 +21,7 @@ export default function TrainerGamePage() {
     const loadModule = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/modules/${moduleId}`,
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/${moduleId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -49,7 +49,7 @@ export default function TrainerGamePage() {
     setSaving(true);
     setAlert(null);
     try {
-      const res = await fetch(`http://localhost:5000/api/modules/${moduleId}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/${moduleId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

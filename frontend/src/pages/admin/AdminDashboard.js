@@ -30,7 +30,7 @@ const AdminDashboard = () => {
     if (!token) return;
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/analytics", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/analytics`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -43,7 +43,9 @@ const AdminDashboard = () => {
   }, [token]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 

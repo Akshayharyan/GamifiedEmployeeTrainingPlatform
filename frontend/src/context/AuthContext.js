@@ -1,8 +1,8 @@
 // src/context/AuthContext.js
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 
 const AuthContext = createContext(null);
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
@@ -10,37 +10,104 @@ export const AuthProvider = ({ children }) => {
     return stored ? JSON.parse(stored) : null;
   });
 
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [accessToken, setAccessToken] = useState(() =>
+    localStorage.getItem("accessToken")
+  );
+  const [refreshToken, setRefreshToken] = useState(() =>
+    localStorage.getItem("refreshToken")
+  );
   const [loading, setLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
 
-  const isAuthenticated = !!token;
+  // Use ref to track newly logged-in tokens to avoid refreshUser using stale closure
+  const justLoggedInRef = useRef(false);
+
+  const isAuthenticated = !!accessToken;
 
   /* =========================
      PERSIST AUTH
   ========================= */
   useEffect(() => {
-    if (token) localStorage.setItem("token", token);
-    else localStorage.removeItem("token");
+    if (accessToken) localStorage.setItem("accessToken", accessToken);
+    else localStorage.removeItem("accessToken");
+
+    if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+    else localStorage.removeItem("refreshToken");
 
     if (user) localStorage.setItem("user", JSON.stringify(user));
     else localStorage.removeItem("user");
-  }, [user, token]);
+  }, [user, accessToken, refreshToken]);
 
   /* =========================
-     🔄 REFRESH USER (SOURCE OF TRUTH)
+     🔄 AUTO-REFRESH TOKEN
   ========================= */
-  const refreshUser = async () => {
-    if (!token) return;
+  const refreshAccessToken = async () => {
+    if (!refreshToken) {
+      console.warn("⚠️ No refresh token available");
+      return false;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (res.status === 401) {
+        // Refresh token is invalid, clear auth
+        setAccessToken(null);
+        setRefreshToken(null);
+        setUser(null);
+        return false;
+      }
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Token refresh failed");
+
+      setAccessToken(data.accessToken);
+      setRefreshToken(data.refreshToken);
+      console.log("✅ Token refreshed successfully");
+      return true;
+    } catch (err) {
+      console.error("❌ Token refresh failed:", err);
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      return false;
+    }
+  };
+
+  /* =========================
+     🔍 REFRESH USER (SOURCE OF TRUTH)
+  ========================= */
+  const refreshUser = async (token) => {
+    // Use provided token or current state token
+    const tokenToUse = token || accessToken;
+    
+    if (!tokenToUse) {
+      console.warn("⚠️ No token available for refreshUser");
+      return;
+    }
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/user/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${tokenToUse}` },
       });
+
+      // If token expired, try to refresh and retry
+      if (res.status === 401) {
+        const refreshed = await refreshAccessToken();
+        if (refreshed) {
+          return refreshUser(); // Retry with new token
+        }
+        return;
+      }
 
       const data = await res.json();
       if (res.ok) {
         setUser(data);
+        console.log("✅ User profile refreshed");
       }
     } catch (err) {
       console.error("❌ refreshUser failed:", err);
@@ -51,9 +118,12 @@ export const AuthProvider = ({ children }) => {
      🔁 AUTO SYNC ON LOAD / TOKEN CHANGE
   ========================= */
   useEffect(() => {
-    if (token) refreshUser();
+    if (accessToken) {
+      console.log("📍 Token changed, refreshing user profile...");
+      refreshUser(accessToken);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [accessToken]);
 
   /* =========================
      REGISTER
@@ -73,8 +143,10 @@ export const AuthProvider = ({ children }) => {
       if (!res.ok) throw new Error(data.message || "Registration failed");
 
       setUser(data.user);
-      setToken(data.token);
-      setTimeout(() => refreshUser(), 0);
+      setAccessToken(data.accessToken);
+      setRefreshToken(data.refreshToken);
+      // Don't call refreshUser here - let useEffect handle it after state updates
+      console.log("✅ Registration successful");
 
       return { success: true };
     } catch (err) {
@@ -102,12 +174,21 @@ export const AuthProvider = ({ children }) => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Login failed");
 
+      console.log("🟢 Login response received:", {
+        user: data.user?.email,
+        hasAccessToken: !!data.accessToken,
+        hasRefreshToken: !!data.refreshToken,
+      });
+
       setUser(data.user);
-      setToken(data.token);
-      setTimeout(() => refreshUser(), 0);
+      setAccessToken(data.accessToken);
+      setRefreshToken(data.refreshToken);
+      // Don't call refreshUser here - let useEffect handle it after state updates
+      console.log("✅ Login successful, tokens stored");
 
       return { success: true, role: data.user.role };
     } catch (err) {
+      console.error("❌ Login failed:", err);
       setAuthError(err.message);
       return { success: false };
     } finally {
@@ -118,10 +199,24 @@ export const AuthProvider = ({ children }) => {
   /* =========================
      LOGOUT
   ========================= */
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    setAuthError(null);
+  const logout = async () => {
+    try {
+      // Call logout endpoint to clear refresh token from DB
+      if (accessToken) {
+        await fetch(`${API_BASE_URL}/api/auth/logout`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+      }
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      setUser(null);
+      setAccessToken(null);
+      setRefreshToken(null);
+      setAuthError(null);
+      console.log("✅ Logged out successfully");
+    }
   };
 
   return (
@@ -130,7 +225,10 @@ export const AuthProvider = ({ children }) => {
         user,
         setUser,
         refreshUser,
-        token,
+        accessToken,
+        token: accessToken,  // ✅ Backward compatibility alias
+        refreshToken,
+        refreshAccessToken,
         isAuthenticated,
         loading,
         authError,

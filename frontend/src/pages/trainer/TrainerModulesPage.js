@@ -284,7 +284,7 @@ export default function TrainerModulesPage() {
   useEffect(() => {
     const loadModules = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/trainer/assigned", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/assigned`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -310,7 +310,7 @@ export default function TrainerModulesPage() {
   useEffect(() => {
     const fetchModuleAchievements = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/achievements/me", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/achievements/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -341,7 +341,7 @@ export default function TrainerModulesPage() {
   }, [token]);
 
   const createAchievement = async (moduleId, formData) => {
-    const res = await fetch("http://localhost:5000/api/trainer/achievements", {
+    const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/achievements`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

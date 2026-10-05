@@ -53,7 +53,7 @@ export default function TopicVideoPage() {
   useEffect(() => {
     const fetchTopic = async () => {
       const res = await fetch(
-        `http://localhost:5000/api/modules/${moduleId}/topics/${topicIndex}`,
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/${moduleId}/topics/${topicIndex}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,7 +92,7 @@ export default function TopicVideoPage() {
           setMarkedComplete(true);
           clearInterval(interval);
 
-          await fetch("http://localhost:5000/api/modules/complete-video", {
+          await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/complete-video`, {
             method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -151,7 +151,7 @@ export default function TopicVideoPage() {
   };
 
   const markVideoComplete = async () => {
-    await fetch("http://localhost:5000/api/modules/complete-video", {
+    await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/complete-video`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

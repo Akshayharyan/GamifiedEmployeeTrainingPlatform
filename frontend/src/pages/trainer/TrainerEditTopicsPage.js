@@ -30,7 +30,7 @@ export default function TrainerEditTopicsPage() {
   const loadModule = useCallback(async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/trainer/module/${moduleId}`,
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/module/${moduleId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -64,7 +64,7 @@ export default function TrainerEditTopicsPage() {
     setAdding(true);
 
     const res = await fetch(
-      `http://localhost:5000/api/trainer/module/${moduleId}/topic`,
+      `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/module/${moduleId}/topic`,
       {
         method: "POST",
         headers: {

@@ -13,7 +13,7 @@ function QuickActions({ modules = [], fetchData }) {
   const startModule = async (moduleObj) => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/modules/start", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/start`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

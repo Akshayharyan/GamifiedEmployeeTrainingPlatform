@@ -21,7 +21,7 @@ function AnalyticsPage() {
 
   useEffect(() => {
     if (!token) return;
-    fetch("http://localhost:5000/api/admin/analytics", {
+    fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/analytics`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

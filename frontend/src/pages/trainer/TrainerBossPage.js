@@ -30,7 +30,7 @@ export default function TrainerBossPage() {
     const loadBoss = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/trainer/boss/module/${moduleId}`,
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/boss/module/${moduleId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -76,7 +76,7 @@ export default function TrainerBossPage() {
 
       if (boss._id) {
         res = await fetch(
-          `http://localhost:5000/api/trainer/boss/${boss._id}`,
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/boss/${boss._id}`,
           {
             method: "PUT",
             headers: {
@@ -88,7 +88,7 @@ export default function TrainerBossPage() {
         );
       } else {
         res = await fetch(
-          `http://localhost:5000/api/trainer/boss`,
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/boss`,
           {
             method: "POST",
             headers: {

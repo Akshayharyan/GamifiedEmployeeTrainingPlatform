@@ -21,10 +21,10 @@ function CreateModulePage() {
     if (!token) return;
     try {
       const [analyticsRes, monitoringRes] = await Promise.all([
-        fetch("http://localhost:5000/api/admin/analytics", {
+        fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/analytics`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://localhost:5000/api/admin/employee-monitoring", {
+        fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/employee-monitoring`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -75,7 +75,7 @@ function CreateModulePage() {
 
     setCreating(true);
     try {
-      const res = await fetch("http://localhost:5000/api/modules/create", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

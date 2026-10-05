@@ -27,12 +27,17 @@ function Dashboard() {
 
   /* ================= FETCH DASHBOARD ================= */
   const fetchData = useCallback(async () => {
+    if (!token) {
+      console.warn("⚠️ No token available for dashboard");
+      return;
+    }
+    
     try {
       const [dashRes, achievRes] = await Promise.all([
-        fetch("http://localhost:5000/api/dashboard/me", {
+        fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/dashboard/me`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://localhost:5000/api/achievements/me", {
+        fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/achievements/me`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -61,8 +66,11 @@ function Dashboard() {
   }, [token]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (token) {
+      console.log("🔄 Dashboard: Token available, fetching data...");
+      fetchData();
+    }
+  }, [token, fetchData]);
 
   /* ================= LOADING ================= */
   if (loading || !profile) {

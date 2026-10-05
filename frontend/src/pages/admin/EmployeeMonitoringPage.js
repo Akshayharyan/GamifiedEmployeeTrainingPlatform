@@ -12,7 +12,7 @@ const EmployeeMonitoringPage = () => {
     const fetchEmployees = async () => {
       try {
         const res = await fetch(
-          "http://localhost:5000/api/admin/employee-monitoring",
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/employee-monitoring`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

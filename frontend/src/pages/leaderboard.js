@@ -214,12 +214,12 @@ const Leaderboard = () => {
       try {
         setLoading(true);
         const [leaderRes, achievRes] = await Promise.all([
-          fetch("http://localhost:5000/api/leaderboard", {
+          fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/leaderboard`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }),
-          fetch("http://localhost:5000/api/achievements/me", {
+          fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/achievements/me`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

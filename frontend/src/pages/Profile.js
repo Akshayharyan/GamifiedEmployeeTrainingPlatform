@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import API from "../utils/axios";
 
 const TYPE_LABELS = {
   XP: "XP Milestones",
@@ -71,9 +72,9 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/user/me", {
-          headers: { Authorization: `Bearer ${token}` },
+        const accessToken = localStorage.getItem("accessToken");
+        const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/user/me`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
 
         const data = await res.json();
@@ -98,10 +99,10 @@ const Profile = () => {
   useEffect(() => {
     const fetchAchievements = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const accessToken = localStorage.getItem("accessToken");
 
-        const res = await fetch("http://localhost:5000/api/achievements/me", {
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/achievements/me`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
 
         const data = await res.json();
@@ -119,9 +120,9 @@ const Profile = () => {
   useEffect(() => {
     const fetchCertificates = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/certificates/mine", {
-          headers: { Authorization: `Bearer ${token}` },
+        const accessToken = localStorage.getItem("accessToken");
+        const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/certificates/mine`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
 
         const data = await res.json();
@@ -435,18 +436,15 @@ const CertificateCard = ({ certificate }) => {
     : new Date();
 
   const downloadPdf = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
       alert("Please sign in again to download your certificate.");
       return;
     }
 
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/certificates/download/${certificate.certificateId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+      const res = await API.get(
+        `/certificates/download/${certificate.certificateId}`
       );
 
       if (!res.ok) {
@@ -489,7 +487,7 @@ const CertificateCard = ({ certificate }) => {
           Download PDF
         </button>
         <a
-          href={`http://localhost:5000/api/certificates/verify/${certificate.certificateId}`}
+          href={`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/certificates/verify/${certificate.certificateId}`}
           target="_blank"
           rel="noreferrer"
           className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400"

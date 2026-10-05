@@ -15,7 +15,7 @@ function AssignModulePage() {
 
   useEffect(() => {
     if (!token) return;
-    fetch("http://localhost:5000/api/admin/users", {
+    fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/users`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -25,7 +25,7 @@ function AssignModulePage() {
 
   useEffect(() => {
     if (!token) return;
-    fetch("http://localhost:5000/api/modules", {
+    fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -60,7 +60,7 @@ function AssignModulePage() {
 
     setLoading(true);
 
-    const res = await fetch("http://localhost:5000/api/admin/assign", {
+    const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/admin/assign`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

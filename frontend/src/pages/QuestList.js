@@ -14,13 +14,13 @@ function QuestList() {
   useEffect(() => {
     async function fetchQuests() {
       try {
-        const token = localStorage.getItem("token");
+        const accessToken = localStorage.getItem("accessToken");
         const res = await fetch(
-          `http://localhost:5000/api/modules/${moduleId}/quests`,
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/${moduleId}/quests`,
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${accessToken}`,
             },
           }
         );

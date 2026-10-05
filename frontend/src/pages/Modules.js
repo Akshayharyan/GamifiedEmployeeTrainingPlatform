@@ -18,7 +18,7 @@ const fetchModules = async () => {
   try {
 
     const res = await fetch(
-      "http://localhost:5000/api/modules/status",
+      `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/status`,
       {
         headers: {
           Authorization: `Bearer ${token}`
@@ -47,7 +47,7 @@ if (token) {
 const handleAction = async (mod) => {
 
 if (!mod.started) {
-  await fetch("http://localhost:5000/api/modules/start", {
+  await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/start`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

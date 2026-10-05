@@ -8,15 +8,15 @@ const AddAchievementForm = ({ moduleId, onCreated }) => {
 
   const submit = async () => {
     setLoading(true);
-    const token = localStorage.getItem("token");
+    const accessToken = localStorage.getItem("accessToken");
 
     const res = await fetch(
-      "http://localhost:5000/api/trainer/achievements",
+      `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/achievements`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           title,

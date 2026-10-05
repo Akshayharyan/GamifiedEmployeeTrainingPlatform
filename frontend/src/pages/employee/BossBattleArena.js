@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import API from "../../utils/axios";
 import BossIntro from "../../battle/BossIntro";
 import BattleArena from "../../battle/BattleArena";
 import { bossAbility } from "../../battle/BossAI";
@@ -105,7 +106,7 @@ export default function BossBattleArena() {
     const fetchModuleTitle = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/modules/${moduleId}/topics`,
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/${moduleId}/topics`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -146,7 +147,7 @@ export default function BossBattleArena() {
       setQuestionLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:5000/api/modules/${moduleId}/quiz-pool`,
+          `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/modules/${moduleId}/quiz-pool`,
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -248,18 +249,13 @@ export default function BossBattleArena() {
       setCertificateLoading(true);
       setCertificateError("");
 
-      const res = await fetch("http://localhost:5000/api/certificates/generate", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ moduleId })
+      const res = await API.post("/certificates/generate", {
+        moduleId
       });
 
-      const data = await res.json();
-
       if (isCancelled()) return;
+
+      const data = await res.json();
 
       if (data.success) {
         setCertificate(data.certificate);
@@ -471,7 +467,7 @@ export default function BossBattleArena() {
     try {
       setCertificateError("");
       const res = await fetch(
-        `http://localhost:5000/api/certificates/download/${certificate.certificateId}`,
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/certificates/download/${certificate.certificateId}`,
         {
           headers: { Authorization: `Bearer ${token}` }
         }

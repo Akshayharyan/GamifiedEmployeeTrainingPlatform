@@ -58,10 +58,10 @@ const AchievementPage = () => {
   useEffect(() => {
     const fetchAchievements = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/achievements/me", {
+        const accessToken = localStorage.getItem("accessToken");
+        const response = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/achievements/me`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
 

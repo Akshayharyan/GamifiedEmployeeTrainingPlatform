@@ -30,7 +30,7 @@ export default function TrainerTopicTasksPage() {
   const loadTasks = useCallback(async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/trainer/module/${moduleId}/topic/${topicIndex}/tasks`,
+        `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/module/${moduleId}/topic/${topicIndex}/tasks`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -67,8 +67,8 @@ export default function TrainerTopicTasksPage() {
 
     const url =
       editingIndex === null
-        ? `http://localhost:5000/api/trainer/module/${moduleId}/topic/${topicIndex}/task`
-        : `http://localhost:5000/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${editingIndex}`;
+        ? `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/module/${moduleId}/topic/${topicIndex}/task`
+        : `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${editingIndex}`;
 
     const method = editingIndex === null ? "POST" : "PUT";
 
@@ -96,7 +96,7 @@ export default function TrainerTopicTasksPage() {
     if (!window.confirm("Delete this task?")) return;
 
     await fetch(
-      `http://localhost:5000/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${index}`,
+      `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${index}`,
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
@@ -151,7 +151,7 @@ export default function TrainerTopicTasksPage() {
       return alert("Input & Output required");
 
     const res = await fetch(
-      `http://localhost:5000/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${taskIndex}/testcase`,
+      `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${taskIndex}/testcase`,
       {
         method: "POST",
         headers: {
@@ -192,7 +192,7 @@ export default function TrainerTopicTasksPage() {
       return alert("Input & Output required");
 
     const res = await fetch(
-      `http://localhost:5000/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${taskIndex}/testcase/${testCaseIndex}`,
+      `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${taskIndex}/testcase/${testCaseIndex}`,
       {
         method: "PUT",
         headers: {
@@ -219,7 +219,7 @@ export default function TrainerTopicTasksPage() {
     if (!window.confirm("Remove this test case?")) return;
 
     const res = await fetch(
-      `http://localhost:5000/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${taskIndex}/testcase/${testCaseIndex}`,
+      `${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/trainer/module/${moduleId}/topic/${topicIndex}/task/${taskIndex}/testcase/${testCaseIndex}`,
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }

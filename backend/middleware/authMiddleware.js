@@ -21,6 +21,16 @@ module.exports = async (req, res, next) => {
     next();
   } catch (err) {
     console.error("Auth middleware error:", err);
+
+    // Handle token expiration specifically
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "Token expired",
+        code: "TOKEN_EXPIRED",
+        expiredAt: err.expiredAt,
+      });
+    }
+
     res.status(401).json({ message: "Invalid token" });
   }
 };
